@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vaninheaven - Advanced Card Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .card-row {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .card-row:hover {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .input-field {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #93c5fd;
+            transition: all 0.3s ease;
+            appearance: none;
+        }
+
+        .input-field:focus {
+            border-color: #3b82f6;
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+            outline: none;
+        }
+
+        select.input-field option {
+            background-color: #ffffff;
+            color: #000000;
+            font-weight: 600;
+        }
+
+        select.input-field {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%233b82f6' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .generate-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.5);
+        }
+
+        .sidebar-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo-container {
+            border: 2px solid rgba(147, 197, 253, 0.3);
+            border-radius: 12px;
+            padding: 8px 24px;
+            display: inline-block;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .brand-logo {
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        .error-text {
+            color: #ef4444;
+            font-family: monospace;
+            font-weight: bold;
+            letter-spacing: 0.1em;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <header class="text-center mb-10">
+            <div class="logo-container mb-4">
+                <h1 class="text-3xl font-black text-white tracking-widest brand-logo uppercase">
+                    VANINHEAVEN
+                </h1>
+            </div>
+            <p class="text-slate-400 text-[10px] font-bold tracking-[0.3em] uppercase opacity-70">Premium Card Generator • High Performance</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="lg:col-span-4 space-y-6">
+                <div class="sidebar-card p-6 rounded-3xl">
+                    <h2 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                        </svg>
+                        Configuration
+                    </h2>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2 ml-1">BIN / Pattern</label>
+                            <input type="text" id="bin" maxlength="16" placeholder="5154620016" 
+                                oninput="validateInput(this)"
+                                class="input-field w-full rounded-xl px-4 py-4 font-mono text-lg tracking-widest font-bold">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2 ml-1">Month</label>
+                                <select id="month" class="input-field w-full rounded-xl px-4 py-3 font-mono font-bold cursor-pointer">
+                                    <option value="">Random</option>
+                                    <option value="01">01</option><option value="02">02</option>
+                                    <option value="03">03</option><option value="04">04</option>
+                                    <option value="05">05</option><option value="06">06</option>
+                                    <option value="07">07</option><option value="08">08</option>
+                                    <option value="09">09</option><option value="10">10</option>
+                                    <option value="11">11</option><option value="12">12</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2 ml-1">Year</label>
+                                <select id="year" class="input-field w-full rounded-xl px-4 py-3 font-mono font-bold cursor-pointer">
+                                    <option value="">Random</option>
+                                    <option value="2025">2025</option><option value="2026">2026</option>
+                                    <option value="2027">2027</option><option value="2028">2028</option>
+                                    <option value="2029">2029</option><option value="2030">2030</option>
+                                    <option value="2031">2031</option><option value="2032">2032</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2 ml-1">CVV</label>
+                            <input type="text" id="cvv" maxlength="4" placeholder="Random" 
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                class="input-field w-full rounded-xl px-4 py-3 font-mono font-bold">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2 ml-1">Quantity</label>
+                            <select id="quantity" class="input-field w-full rounded-xl px-4 py-3 font-mono font-bold cursor-pointer">
+                                <option value="10">10 Cards</option>
+                                <option value="20">20 Cards</option>
+                                <option value="50">50 Cards</option>
+                                <option value="100">100 Cards</option>
+                            </select>
+                        </div>
+
+                        <button onclick="generateBulk()" class="generate-btn w-full py-4 rounded-xl font-bold uppercase tracking-widest text-sm mt-4 shadow-lg">
+                            Generate Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-8">
+                <div class="bg-slate-900/50 rounded-3xl border border-slate-700 shadow-xl overflow-hidden flex flex-col h-[650px]">
+                    <div class="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/30">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <span>Generated List</span>
+                            <span id="result-count" class="bg-blue-600 text-white text-[10px] px-2.5 py-1 rounded-full hidden font-extrabold">0</span>
+                        </h2>
+                        <button onclick="copyAll()" id="copy-all-btn" class="text-[10px] text-blue-400 hover:text-white transition-all hidden uppercase font-bold tracking-widest border border-blue-400/30 px-4 py-2 rounded-xl hover:bg-blue-600 hover:border-blue-600">
+                            Copy All
+                        </button>
+                    </div>
+                    
+                    <div id="results-list" class="flex-1 overflow-y-auto p-5 custom-scrollbar space-y-3">
+                        <div id="placeholder" class="h-full flex flex-col items-center justify-center text-slate-600">
+                            <div id="placeholder-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mb-4 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V5a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <p id="placeholder-text" class="text-lg font-medium opacity-50">Ready to generate cards...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-8 py-3.5 rounded-2xl font-bold shadow-2xl opacity-0 transition-all pointer-events-none z-50 text-sm">
+        Successfully Copied
+    </div>
+
+    <script>
+        function validateInput(input) {
+            const myanmarNumbers = {'၀':'0','၁':'1','၂':'2','၃':'3','၄':'4','၅':'5','၆':'6','၇':'7','၈':'8','၉':'9'};
+            let value = input.value;
+            for (let myan in myanmarNumbers) {
+                value = value.split(myan).join(myanmarNumbers[myan]);
+            }
+            input.value = value.replace(/[^0-9xX]/g, '');
+        }
+
+        function isValidLuhn(number) {
+            let sum = 0;
+            let shouldDouble = false;
+            for (let i = number.length - 1; i >= 0; i--) {
+                let digit = parseInt(number.charAt(i));
+                if (shouldDouble) {
+                    digit *= 2;
+                    if (digit > 9) digit -= 9;
+                }
+                sum += digit;
+                shouldDouble = !shouldDouble;
+            }
+            return (sum % 10) === 0;
+        }
+
+        function generateBulk() {
+            const binInputEl = document.getElementById('bin');
+            const qtyEl = document.getElementById('quantity');
+            const resultsList = document.getElementById('results-list');
+            const copyAllBtn = document.getElementById('copy-all-btn');
+            const countBadge = document.getElementById('result-count');
+
+            if (!binInputEl || !qtyEl || !resultsList) return;
+
+            const binInput = binInputEl.value.trim();
+            const qty = parseInt(qtyEl.value) || 10;
+
+            if (!binInput) {
+                showToast("Please enter a BIN pattern!");
+                return;
+            }
+
+            if (binInput.length === 16 && !binInput.toLowerCase().includes('x')) {
+                if (!isValidLuhn(binInput)) {
+                    resultsList.innerHTML = '';
+                    const errPlaceholder = document.createElement('div');
+                    errPlaceholder.className = 'h-full flex flex-col items-center justify-center text-slate-600';
+                    errPlaceholder.innerHTML = `
+                        <div id="placeholder-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mb-4 text-red-500/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </div>
+                        <p class="text-lg font-medium opacity-50"><span class="error-text text-3xl">xxxxxxxxxxxx</span></p>
+                    `;
+                    resultsList.appendChild(errPlaceholder);
+                    copyAllBtn.classList.add('hidden');
+                    countBadge.classList.add('hidden');
+                    return;
+                }
+            }
+
+            copyAllBtn.classList.remove('hidden');
+            countBadge.classList.remove('hidden');
+            countBadge.innerText = qty;
+            resultsList.innerHTML = '';
+
+            for (let i = 0; i < qty; i++) {
+                const cardData = generateSingleCard(binInput);
+                const row = document.createElement('div');
+                row.className = 'card-row flex items-center justify-between p-4 rounded-2xl animate-in fade-in duration-300';
+                
+                row.innerHTML = `
+                    <div class="card-text font-mono text-sm tracking-wider flex-1 text-slate-300 font-bold overflow-x-auto whitespace-nowrap">
+                        <span class="text-blue-400">${cardData.number}</span>
+                        <span class="text-slate-600 mx-2">|</span>
+                        <span class="text-emerald-400">${cardData.expiry}</span>
+                        <span class="text-slate-600 mx-2">|</span>
+                        <span class="text-orange-400">${cardData.cvv}</span>
+                    </div>
+                    <button onclick="copyText('${cardData.full}')" class="ml-4 p-2 hover:bg-slate-700 rounded-lg transition-all" title="Copy Info">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500 hover:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                    </button>
+                `;
+                resultsList.appendChild(row);
+            }
+        }
+
+        function generateSingleCard(binPattern) {
+            let digits = [];
+            let cleanPattern = binPattern.toLowerCase();
+            
+            for(let i=0; i<cleanPattern.length; i++) {
+                const char = cleanPattern[i];
+                if(char === 'x') digits.push(Math.floor(Math.random() * 10));
+                else if (!isNaN(parseInt(char))) digits.push(parseInt(char));
+            }
+
+            while (digits.length < 15) digits.push(Math.floor(Math.random() * 10));
+            if (digits.length > 15) digits = digits.slice(0, 15);
+
+            let sum = 0;
+            for (let i = 0; i < digits.length; i++) {
+                let d = digits[digits.length - 1 - i];
+                if (i % 2 === 0) {
+                    d *= 2;
+                    if (d > 9) d -= 9;
+                }
+                sum += d;
+            }
+            const checkDigit = (10 - (sum % 10)) % 10;
+            digits.push(checkDigit);
+
+            const num = digits.join('');
+            let m = document.getElementById('month').value || Math.floor(Math.random() * 12 + 1).toString().padStart(2, '0');
+            let y = document.getElementById('year').value || (2025 + Math.floor(Math.random() * 7)).toString();
+            let c = document.getElementById('cvv').value || Math.floor(Math.random() * 900 + 100).toString();
+
+            return {
+                number: num, expiry: `${m}|${y}`, cvv: c,
+                full: `${num}|${m}|${y}|${c}`
+            };
+        }
+
+        function copyText(text) {
+            const el = document.createElement('textarea');
+            el.value = text;
+            el.setAttribute('readonly', '');
+            el.style.position = 'absolute'; el.style.left = '-9999px';
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            showToast("Copied to clipboard");
+        }
+
+        function copyAll() {
+            const rows = document.querySelectorAll('.card-text');
+            if (rows.length === 0) return;
+            const cards = Array.from(rows).map(el => el.innerText.replace(/\s\|\s/g, '|')).join('\n');
+            copyText(cards);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            toast.innerText = msg;
+            toast.style.opacity = '1';
+            setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+        }
+    </script>
+</body>
+</html>
